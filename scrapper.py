@@ -49,7 +49,7 @@ def find_end_index(batting_items):
     
 def create_match_json(data):    
     match_info(data)
-    match_scores_json(data)
+    #match_scores_json(data)
     
 
 def if_proceed(data,innings):
@@ -61,7 +61,8 @@ def if_proceed(data,innings):
     
 
 def match_info(data):
-    pass
+    match_info = data.find_all("div",{"class":"cb-mtch-info-itm"})[1].find_all("div")
+    print(match_info[1])
 
 def match_scores_json(data):
     innings_array = ['innings_1','innings_2']
