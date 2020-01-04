@@ -23,7 +23,7 @@ def main2():
     
     
 def main():
-    for main_index in range (22583,22584):
+    for main_index in range (22582,22583):
         req = Request("https://www.cricbuzz.com/api/html/cricket-scorecard/"+str(main_index) , headers = {'User-Agent': 'Mozilla/5.0'})
         webpage = urlopen(req).read()
     
@@ -31,9 +31,9 @@ def main():
         #date = bsObj.find_all("div",{"class":"cb-mtch-info-itm"})[1].get_text()
         #print(date + str(main_index))
         if(find_match_type(bsObj) == 'Test'):
-            match_dict = {'match_info':{},'match_scores':{'innings_1':{},'innings_2':{},'innings_3':{},'innings_4':{}}}
+            match_dict = {'match_result':{'winner':'','description':''},'match_info':{},'match_scores':{'innings_1':{},'innings_2':{},'innings_3':{},'innings_4':{}}}
         else:
-            match_dict = {'match_info':{},'match_scores':{'innings_1':{},'innings_2':{}}}
+            match_dict = {'match_result':{'winner':'','description':''},'match_info':{},'match_scores':{'innings_1':{},'innings_2':{}}}
         create_match_json(bsObj,match_dict)
         print("Match DATA for index -------------->"+str(main_index))
         print(match_dict)
@@ -53,6 +53,7 @@ def find_end_index(batting_items):
 def create_match_json(data,match_dict):    
     match_info(data,match_dict)
     #match_scores_json(data,match_dict)
+    match_result(data,match_dict)
 
 def if_proceed(data,innings):
     find_innings = data.find("div",{"id":innings})
@@ -81,8 +82,13 @@ def match_info(data,match_dict):
     match_dict['match_info'] = dict.fromkeys(info_labels,'')
     for ind,val in enumerate(info_labels):
         match_dict['match_info'][val] = info_data[ind]
+    
+    control_type = 'match_details'
+    info_string = info_data[info_labels.index('Match')]
+    additional_info(control_type,info_string,match_dict)
     return
     
+
 def match_scores_json(data,match_dict):
     if(find_match_type(data) == 'Test'):
         innings_array = ['innings_1','innings_2','innings_3','innings_4']
@@ -122,6 +128,23 @@ def batsman_data(scorecard_items,innings,match_dict):
             inner_dict[val] = batsman[ind].get_text()
         batsman_dict[i] = inner_dict
     match_dict['match_scores'][innings]['batting_data'] = batsman_dict
+
+
+def match_result(data,match_dict):
+    result = data.find_all("div",{"class":"cb-text-complete"})[0].get_text()
+    match_dict['match_result']['description'] = result
+    return
+
+
+def additional_info(control,info,match_dict):
+    if(control == 'match_details'):
+        info = info.split(",")
+        team_1 = info[0].split("vs")[0]
+        team_2 = info[0].split("vs")[1]
+        match_dict['match_info']['team_1'] = team_1
+        match_dict['match_info']['team_2'] = team_2
+        
+    return
 
 if __name__ == '__main__':
     main()
