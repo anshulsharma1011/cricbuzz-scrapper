@@ -17,24 +17,26 @@ batting_index = 0
 bowling_index = 1
 
 def test():
-    req = Request("https://www.cricbuzz.com/api/html/cricket-scorecard/3042", headers = {'User-Agent': 'Mozilla/5.0'})
+    req = Request("https://www.cricbuzz.com/api/html/cricket-scorecard/22583", headers = {'User-Agent': 'Mozilla/5.0'})
     webpage = urlopen(req).read()
     bsObj = BeautifulSoup(webpage, 'lxml')
-    first_innings = bsObj.find("div",{"id":"innings_2"})
-    print(first_innings==None)
+    
+    print(date)
     
     
     
     
 def main():
-    for main_index in range (3000,3001):
+    for main_index in range (22580,22590):
         req = Request("https://www.cricbuzz.com/api/html/cricket-scorecard/"+str(main_index) , headers = {'User-Agent': 'Mozilla/5.0'})
         webpage = urlopen(req).read()
     
         bsObj = BeautifulSoup(webpage, 'lxml')
-        create_match_json(bsObj)
-        print("Match DATA for index -------------->"+str(main_index))
-        print(match_dict)
+        date = bsObj.find_all("div",{"class":"cb-mtch-info-itm"})[1].get_text()
+        print(date + str(main_index))
+        #create_match_json(bsObj)
+        #print("Match DATA for index -------------->"+str(main_index))
+        #print(match_dict)
         #with open('D:\\Python Scrapping Project\\JSON DATA\\data'+str(main_index)+'.json','w') as outfile:
             #json.dump(match_dict,outfile)
 
@@ -49,8 +51,8 @@ def find_end_index(batting_items):
     
     
 def create_match_json(data):    
-    match_info(data)
-    #match_scores_json(data)
+    #match_info(data)
+    match_scores_json(data)
     
 
 def if_proceed(data,innings):
