@@ -16,8 +16,6 @@ def main2():
     webpage = urlopen(req).read()
     bsObj = BeautifulSoup(webpage, 'lxml')
     print(bsObj)
-    text = "B Oxenford,&nbsp;R Tucker"
-    print(html.unescape(text))
     
     
     
