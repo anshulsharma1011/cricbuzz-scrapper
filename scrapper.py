@@ -1,5 +1,5 @@
 #HI There
-from urllib.request import Request, urlopen
+from urllib.request import Request, urlopen, URLopener
 from bs4 import BeautifulSoup
 import html
 #import json
@@ -15,11 +15,17 @@ bowling_index = 1
     
 
 def main():
+   opener = URLopener()
+   opener.addheader('User-Agent', 'Mozilla/5.0')
+   filename, headers = opener.retrieve('https://www.cricbuzz.com/a/img/v1/152x152/i1/c170677/ms-dhoni.jpg', 'Test.jpg')
+    
+    
+def main2():
     winner_workbook = excel_file.init_workbook()
     winner_worksheet = excel_file.init_worksheet(winner_workbook,'winnerXLS')
     
     ind = 1
-    for main_index in range (3000,3002):
+    for main_index in range (3000,3010):
         req = Request("https://www.cricbuzz.com/api/html/cricket-scorecard/"+str(main_index) , headers = {'User-Agent': 'Mozilla/5.0'})
         webpage = urlopen(req).read()
     
