@@ -2,6 +2,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 
 
+
 def main():
     
     arr = ['https://www.cricbuzz.com//profiles/265/ms-dhoni']
