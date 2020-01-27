@@ -75,9 +75,9 @@ class excel_file:
     
     def save_excelfile(workbook,controlId):
         if(controlId == 'winnerXLS'):
-            workbook.save('D:\\Python Scrapping Project\\files\\excel\\winnersTest_updated_6000_7000.xls')
+            workbook.save('D:\\Python Scrapping Project\\files\\excel\\winners\\winnersTest_updated_20000_2.xls')
         elif(controlId == 'match_info_XLS'):
-            workbook.save('D:\\Python Scrapping Project\\files\\excel\\match_info_updated_6000_7000.xls')
+            workbook.save('D:\\Python Scrapping Project\\files\\excel\\match\\match_info_updated_20000_2.xls')
 
 
 class write_match_info:

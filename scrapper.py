@@ -1,6 +1,7 @@
 #HI There
 from urllib.request import Request, urlopen, URLopener
 from bs4 import BeautifulSoup
+from datetime import datetime
 import html
 import json
 import sys
@@ -25,11 +26,11 @@ def main():
     winner_worksheet = excel_file.init_worksheet(winner_workbook,'winnerXLS')
     match_info_workbook = excel_file.init_workbook()
     match_info_worksheet = excel_file.init_worksheet(match_info_workbook,'match_info_XLS')
-    f = open("D:\\Python Scrapping Project\\files\\logs\\error_updated_6000_7000.txt","a")
-    player = open("D:\\Python Scrapping Project\\files\\player\\player_profile_updated_6000_7000.txt","a")
+    f = open("D:\\Python Scrapping Project\\files\\logs\\error_updated_20000_4.txt","a")
+    player = open("D:\\Python Scrapping Project\\files\\player\\player_profile_updated_20000_4.txt","a")
     
     ind = 1
-    for main_index in range (6000,7000):
+    for main_index in range (20000,24000):
         req = Request("https://www.cricbuzz.com/api/html/cricket-scorecard/"+str(main_index) , headers = {'User-Agent': 'Mozilla/5.0'})
         webpage = urlopen(req).read()
     
@@ -46,11 +47,11 @@ def main():
             create_match_json(bsObj,match_dict,player)
             with open('D:\\Python Scrapping Project\\files\\match json\\data'+str(main_index)+'.json','w') as outfile:
                 json.dump(match_dict,outfile)
-            print("Successful for index: " + str(main_index))
+            print("Successful for index: " + str(main_index)+" "+ str(datetime.now()))
         except:
             match_dict = commonFunctions.generate_match_dict('empty',main_index,winner_dic)
-            commonFunctions.writeToLog(f,"Error for index: " + str(main_index))
-            print("Error for index: " + str(main_index))
+            commonFunctions.writeToLog(f,"Error for index: " + str(main_index) +" "+ str(datetime.now()))
+            print("Error for index: " + str(main_index) +" "+  str(datetime.now()))
         #print("Match DATA for index -------------->"+str(main_index))
         #print(match_dict)
             
@@ -62,19 +63,18 @@ def main():
     
 def create_match_json(data,match_dict,player):    
     matchInfo.match_info(data,match_dict)
-    matchData.match_scores_json(data,match_dict,player)
+    matchData.match_scores_json(data,match_dict)
     matchInfo.playing_XI(data,match_dict,player)
 
 class matchData:
     
-    def batsman_data(scorecard_items,innings,match_dict,player):
+    def batsman_data(scorecard_items,innings,match_dict):
         batsman_dict = {}
         labels = ['name','result','runs','balls','4','6','SR','link']
         end_index = commonFunctions.find_end_index(scorecard_items)
         for i in range(0,end_index):
             inner_dict = dict.fromkeys(labels,'')
             batsman = scorecard_items[i].find_all("div")
-            #commonFunctions.write_to_profile(batsman,player)
             
             for ind,val in enumerate(labels):
                 if val == 'link':
@@ -85,13 +85,12 @@ class matchData:
         match_dict['match_scores'][innings]['batting_data'] = batsman_dict
     
     
-    def bowlers_data(scorecard_items,innings,match_dict,player):
+    def bowlers_data(scorecard_items,innings,match_dict):
         bowler_dict = {}
         labels = ['name','overs','maiden','runs','wickets','no_balls','wides','economy','link']
         for i in range(0,len(scorecard_items)):
             inner_dict = dict.fromkeys(labels,'')
             bowler = scorecard_items[i].find_all("div")
-            #commonFunctions.write_to_profile(bowler,player)
             for ind,val in enumerate(labels):
                 if val == 'link':
                     inner_dict[val] = bowler[0].find("a")['href'].strip()
@@ -101,7 +100,7 @@ class matchData:
         match_dict['match_scores'][innings]['bowling_data'] = bowler_dict
         
     
-    def match_scores_json(data,match_dict,player):
+    def match_scores_json(data,match_dict):
         if(commonFunctions.find_match_type(data) == 'Test'):
             innings_array = ['innings_1','innings_2','innings_3','innings_4']
         else:
@@ -110,8 +109,8 @@ class matchData:
             if(commonFunctions.if_proceed(data,i)):
                 batting_items = data.find("div",{"id":i}).find_all("div",{"class":scorecard_root_class})[batting_index].find_all("div",{"class":scorecard_items_class})
                 bowling_items = data.find("div",{"id":i}).find_all("div",{"class":scorecard_root_class})[bowling_index].find_all("div",{"class":scorecard_items_class})
-                matchData.batsman_data(batting_items,i,match_dict,player)
-                matchData.bowlers_data(bowling_items,i,match_dict,player)
+                matchData.batsman_data(batting_items,i,match_dict)
+                matchData.bowlers_data(bowling_items,i,match_dict)
             else:
                 match_dict['match_scores'][i]['batting_data'] = {}
                 match_dict['match_scores'][i]['bowling_data'] = {}
