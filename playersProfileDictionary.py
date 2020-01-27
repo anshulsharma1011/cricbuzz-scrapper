@@ -16,31 +16,42 @@ worksheet.write(0, 7, label = 'Name TAG5')
 worksheet.write(0, 8, label = 'Name TAG6')
 worksheet.write(0, 9, label = 'Name TAG7')
 
-file_name = "player_profile_updated_12000_3"
-f = open("D:\\Python Scrapping Project\\files\\player\\"+file_name+".txt", "r")
+
+
+path = 'D:\\Python Scrapping Project\\files\\player\\'
+file_names = ['player_profile.txt','player_profile_updated_1.txt','player_profile_updated_4000_5000.txt','player_profile_updated_5000_6000.txt','player_profile_updated_6000_7000.txt','player_profile_updated_7000.txt','player_profile_updated_10000_1.txt','player_profile_updated_12000_3.txt']
 
 playerDictionary = {}
 
-arr = list(set(f))
-for i,l in enumerate(arr):
-    inner_dict = {'name':'','link':''}
-    name = l.split(":")[0].strip()
-    link = l.split(":")[1].strip()
+ind = 1
+for x in range(0,len(file_names)):
+    f = open(path+file_names[x],"r")
+    arr = list(set(f))
+    
+    for i,l in enumerate(arr):
+        name = l.split(":")[0].strip()
+        link = l.split(":")[1].strip()
+        playerDictionary[name] = link
+
+print(playerDictionary)
+
+
+for key,val in playerDictionary.items():
+    name = key
+    link = val
     name_tags = name.split(" ")
     
-    worksheet.write(i+1, 0, label = i)
-    worksheet.write(i+1, 1, label = name)
-    worksheet.write(i+1, 2, label = link)
+    worksheet.write(ind, 0, label = ind)
+    worksheet.write(ind, 1, label = name)
+    worksheet.write(ind, 2, label = link)
     
     for j in range(0,len(name_tags)):
-        worksheet.write(i+1, j+3, label = name_tags[j])
-            
-    inner_dict['name'] = name
-    inner_dict['link'] = link
-    playerDictionary[i] = inner_dict
-    print("Read Line: "+str(i))
+        worksheet.write(ind, j+3, label = name_tags[j])
+    
+    ind = ind+1
+    print(ind)
 
-workbook.save('D:\\Python Scrapping Project\\files\\excel\\player\\playerProfile_'+file_name+'.xls')
+workbook.save('D:\\Python Scrapping Project\\files\\excel\\playerFinal.xls')
 
-with open('D:\\Python Scrapping Project\\files\\player\\data_'+file_name+'.json','w') as outfile:
+with open('D:\\Python Scrapping Project\\files\\player\\data_players.json','w') as outfile:
     json.dump(playerDictionary,outfile)
